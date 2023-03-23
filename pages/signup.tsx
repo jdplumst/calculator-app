@@ -1,10 +1,30 @@
+import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useState } from "react";
+import cookie from "cookie";
+import { useRouter } from "next/navigation";
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // If JWT found in cookies, redirect to home page
+  const cookies = cookie.parse(context.req.headers.cookie || "");
+  if (cookies.token) {
+    return {
+      redirect: {
+        destination: "/"
+      }
+    };
+  }
+  return {
+    props: {}
+  };
+}
 
 export default function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   // Attempt to signup user
   const handleSignup = async (e: React.FormEvent) => {
@@ -20,7 +40,7 @@ export default function Signup() {
         setError(data.error);
       } else if (response.ok) {
         setError(null);
-        console.log(data.username);
+        router.push("/"); // Go to Home page
       }
     } catch (error) {
       throw error;

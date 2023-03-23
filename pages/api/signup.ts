@@ -34,7 +34,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           serialize("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV !== "development",
-            maxAge: 60 * 60
+            sameSite: "strict",
+            maxAge: 60 * 60,
+            path: "/"
           })
         );
         return res.status(200).json({ username: username, token: token });
