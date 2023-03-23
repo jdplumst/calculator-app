@@ -29,16 +29,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           process.env.TOKEN_SECRET as string,
           { expiresIn: 60 * 60 } // expires in 1 hour
         );
-        res.setHeader(
-          "Set-Cookie",
+        res.setHeader("Set-Cookie", [
           serialize("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV !== "development",
             sameSite: "strict",
             maxAge: 60 * 60,
             path: "/"
+          }),
+          serialize("username", username, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== "development",
+            sameSite: "strict",
+            maxAge: 60 * 60,
+            path: "/"
           })
-        );
+        ]);
+
         return res.status(200).json({ username: username, token: token });
       } catch (error: any) {
         // Catch if user already exists in db or other errors
