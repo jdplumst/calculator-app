@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcrypt";
 import prisma from "@/prisma";
-import { serialize } from "cookie";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   // Ensure only POST methods can be used on this route
