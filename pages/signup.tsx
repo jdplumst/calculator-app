@@ -1,23 +1,6 @@
-import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import cookie from "cookie";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // If JWT found in cookies, redirect to home page
-  const cookies = cookie.parse(context.req.headers.cookie || "");
-  if (cookies.username) {
-    return {
-      redirect: {
-        destination: "/"
-      }
-    };
-  }
-  return {
-    props: {}
-  };
-}
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -40,12 +23,25 @@ export default function Signup() {
         setError(data.error);
       } else if (response.ok) {
         setError(null);
+        localStorage.setItem(
+          "usersession",
+          JSON.stringify({ username: data.username })
+        );
         router.push("/"); // Go to Home page
       }
     } catch (error) {
       throw error;
     }
   };
+
+  // Check if user session exists and go to Home page if it does
+  useEffect(() => {
+    const user = localStorage.getItem("usersession");
+    if (user) {
+      router.push("/");
+    }
+    console.log(user);
+  });
 
   return (
     <>

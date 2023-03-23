@@ -30,18 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(400).json({ error: "Incorrect password" });
           }
 
-          // Set cookie
-          res.setHeader(
-            "Set-Cookie",
-            serialize("username", username, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV !== "development",
-              sameSite: "strict",
-              maxAge: 60 * 60, // 1 hour
-              path: "/"
-            })
-          );
-          return res.status(200).json({ username: username });
+          return res.status(200).json({ username: user.username });
         }
       } catch (error) {
         return res
