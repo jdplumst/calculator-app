@@ -4,6 +4,28 @@ import { useState } from "react";
 export default function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  // Attempt to signup user
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username, password: password })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error);
+      } else if (response.ok) {
+        setError(null);
+        console.log(data.username);
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 
   return (
     <>
@@ -16,7 +38,7 @@ export default function Signup() {
       <div className="flex h-screen items-start justify-center bg-slate-300 pt-10">
         <div className="w-1/3 bg-white px-10 py-5">
           <h3 className="text-center text-3xl font-bold">Signup</h3>
-          <form>
+          <form onSubmit={(e) => handleSignup(e)}>
             <input
               type="text"
               placeholder="Username"
@@ -32,10 +54,15 @@ export default function Signup() {
               className="mt-5 block w-full rounded-lg border-2 border-solid border-slate-200 p-2 focus:border-slate-500 focus:outline-none"
             />
             <div className="flex justify-center pt-5">
-              <button className="w-1/4 rounded-lg bg-blue-500 p-4 font-bold text-white hover:cursor-pointer hover:bg-blue-700">
+              <button className="w-1/2 rounded-lg bg-blue-500 p-4 font-bold text-white hover:cursor-pointer hover:bg-blue-700">
                 Sign Up
               </button>
             </div>
+            {error && (
+              <div className="mx-auto mt-5 w-fit border-4 border-solid border-pink-300 bg-pink-200 p-2 text-center font-bold">
+                {error}
+              </div>
+            )}
           </form>
         </div>
       </div>

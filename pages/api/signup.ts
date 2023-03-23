@@ -22,7 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const user = await prisma.users.create({
           data: { username: username, password: hash }
         });
-        return res.status(200).json({ user: user });
+        return res.status(200).json({ username: username });
       } catch (error: any) {
         if (error.code === "P2002") {
           return res.status(400).json({ error: "Username is already in use" });
