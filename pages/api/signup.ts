@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcrypt";
 import prisma from "@/prisma";
-import jsonwebtoken from "jsonwebtoken";
 import { serialize } from "cookie";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -20,33 +19,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const hash = await bcrypt.hash(password, salt);
 
       try {
-        // Add new user to db and create JWT
+        // Add new user to db
         const user = await prisma.users.create({
           data: { username: username, password: hash }
         });
-        const token = jsonwebtoken.sign(
-          { id: user.id },
-          process.env.TOKEN_SECRET as string,
-          { expiresIn: 60 * 60 } // expires in 1 hour
-        );
-        res.setHeader("Set-Cookie", [
-          serialize("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV !== "development",
-            sameSite: "strict",
-            maxAge: 60 * 60,
-            path: "/"
-          }),
+        res.setHeader(
+          "Set-Cookie",
           serialize("username", username, {
             httpOnly: true,
             secure: process.env.NODE_ENV !== "development",
             sameSite: "strict",
-            maxAge: 60 * 60,
+            maxAge: 60 * 60, // 1 hour
             path: "/"
           })
-        ]);
+        );
 
-        return res.status(200).json({ username: username, token: token });
+        return res.status(200).json({ username: username });
       } catch (error: any) {
         // Catch if user already exists in db or other errors
         if (error.code === "P2002") {

@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/prisma";
 import bcrypt from "bcrypt";
-import jsonwebtoken from "jsonwebtoken";
 import { serialize } from "cookie";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -30,29 +29,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           if (!check) {
             res.status(400).json({ error: "Incorrect password" });
           }
-          // Sign JWT and set cookies
-          const token = jsonwebtoken.sign(
-            { id: user.id },
-            process.env.TOKEN_SECRET as string,
-            { expiresIn: 60 * 60 } // expires in 1 hour
-          );
-          res.setHeader("Set-Cookie", [
-            serialize("token", token, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV !== "development",
-              sameSite: "strict",
-              maxAge: 60 * 60,
-              path: "/"
-            }),
+
+          // Set cookie
+          res.setHeader(
+            "Set-Cookie",
             serialize("username", username, {
               httpOnly: true,
               secure: process.env.NODE_ENV !== "development",
               sameSite: "strict",
-              maxAge: 60 * 60,
+              maxAge: 60 * 60, // 1 hour
               path: "/"
             })
-          ]);
-          return res.status(200).json({ username: username, token: token });
+          );
+          return res.status(200).json({ username: username });
         }
       } catch (error) {
         return res
