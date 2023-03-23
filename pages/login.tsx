@@ -40,7 +40,6 @@ export default function Login() {
     if (user) {
       router.push("/");
     }
-    console.log(user);
   });
 
   return (

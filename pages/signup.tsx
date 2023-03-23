@@ -40,7 +40,6 @@ export default function Signup() {
     if (user) {
       router.push("/");
     }
-    console.log(user);
   });
 
   return (
