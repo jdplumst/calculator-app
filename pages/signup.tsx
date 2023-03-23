@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   // If JWT found in cookies, redirect to home page
   const cookies = cookie.parse(context.req.headers.cookie || "");
-  if (cookies.token) {
+  if (cookies.username) {
     return {
       redirect: {
         destination: "/"
