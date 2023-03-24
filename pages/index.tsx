@@ -26,8 +26,8 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="h-screen">
-        <nav className="navbar navbar-expand-lg navbar-light relative flex w-full flex-wrap items-center justify-around py-4 font-bold shadow-lg">
+      <div className="flex h-screen flex-col items-center">
+        <nav className="max-h-1/5 navbar navbar-expand-lg navbar-light relative flex w-full flex-wrap items-center justify-around py-4 font-bold shadow-lg">
           <div className="w-1/3">
             {username ? (
               <span>You are signed in as {username}</span>
@@ -51,6 +51,53 @@ export default function Home() {
             </div>
           )}
         </nav>
+        <div className="mt-10 h-[580px] w-[500px] border-4 border-black bg-gray-500">
+          <div className="mx-auto mt-5 flex h-[100px] w-[400px] items-center justify-end border-2 border-black bg-slate-400 p-2 text-5xl">
+            <span>0</span>
+          </div>
+          <div className="grid grid-cols-4 gap-[1px] p-5">
+            <button className="button bg-red-500 hover:bg-red-600">MC</button>
+            <button className="button bg-red-500 hover:bg-red-600">MR</button>
+            <button className="button bg-red-500 hover:bg-red-600">M+</button>
+            <button className="button bg-red-500 hover:bg-red-600">M-</button>
+            <button className="button bg-green-500 hover:bg-green-600">
+              AC
+            </button>
+            <button className="button bg-green-500 hover:bg-green-600">
+              %
+            </button>
+            <button className="button bg-green-500 hover:bg-green-600">
+              √
+            </button>
+            <button className="button bg-green-500 hover:bg-green-600">
+              ^
+            </button>
+            <button className="button bg-sky-500 hover:bg-sky-600">7</button>
+            <button className="button bg-sky-500 hover:bg-sky-600">8</button>
+            <button className="button bg-sky-500 hover:bg-sky-600">9</button>
+            <button className="button bg-orange-500 hover:bg-orange-600">
+              /
+            </button>
+            <button className="button bg-sky-500 hover:bg-sky-600">4</button>
+            <button className="button bg-sky-500 hover:bg-sky-600">5</button>
+            <button className="button bg-sky-500 hover:bg-sky-600">6</button>
+            <button className="button bg-orange-500 hover:bg-orange-600">
+              *
+            </button>
+            <button className="button bg-sky-500 hover:bg-sky-600">1</button>
+            <button className="button bg-sky-500 hover:bg-sky-600">2</button>
+            <button className="button bg-sky-500 hover:bg-sky-600">3</button>
+            <button className="button bg-orange-500 hover:bg-orange-600">
+              -
+            </button>
+            <button className="button bg-sky-500 hover:bg-sky-600">0</button>
+            <button className="button bg-sky-500 hover:bg-sky-600">.</button>
+            <button className="button bg-sky-500 hover:bg-sky-600">=</button>
+            <button className="button bg-orange-500 hover:bg-orange-600">
+              +
+            </button>
+          </div>
+        </div>
       </div>
     </>
   );

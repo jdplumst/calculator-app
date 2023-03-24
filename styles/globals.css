@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.button {
+  height: 70px;
+  border-width: 2px;
+  border-color: black;
+  font-size: 24px;
+}
