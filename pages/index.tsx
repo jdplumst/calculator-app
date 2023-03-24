@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -6,11 +7,16 @@ export default function Home() {
 
   // Check if user session exists
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("usersession") || "null");
+    const user = JSON.parse(localStorage.getItem("userSession") || "null");
     if (user) {
       setUsername(user.username);
     }
-  });
+  }, [username]);
+
+  const handleSignout = () => {
+    setUsername(null);
+    localStorage.removeItem("userSession");
+  };
 
   return (
     <>
@@ -32,12 +38,16 @@ export default function Home() {
           <h1 className="text-4xl">Calculator App</h1>
           {username ? (
             <div className="flex w-1/3 justify-end">
-              <button>Sign Out</button>
+              <button onClick={() => handleSignout()}>Sign Out</button>
             </div>
           ) : (
             <div className="flex w-1/3 justify-end">
-              <button className="mr-10">Login</button>
-              <button>Sign Up</button>
+              <Link href="/login">
+                <button className="mr-10">Login</button>
+              </Link>
+              <Link href="/signup">
+                <button>Sign Up</button>
+              </Link>
             </div>
           )}
         </nav>

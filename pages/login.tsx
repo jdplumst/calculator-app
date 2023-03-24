@@ -9,6 +9,14 @@ export default function Login() {
 
   const router = useRouter();
 
+  // Check if user session exists and go to Home page if it does
+  useEffect(() => {
+    const user = localStorage.getItem("userSession");
+    if (user) {
+      router.push("/");
+    }
+  }, []);
+
   // Attempt to login user
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +32,7 @@ export default function Login() {
       } else if (response.ok) {
         setError(null);
         localStorage.setItem(
-          "usersession",
+          "userSession",
           JSON.stringify({ username: data.username })
         );
         router.push("/"); // Go to Home page
@@ -33,14 +41,6 @@ export default function Login() {
       throw error;
     }
   };
-
-  // Check if user session exists and go to Home page if it does
-  useEffect(() => {
-    const user = localStorage.getItem("usersession");
-    if (user) {
-      router.push("/");
-    }
-  });
 
   return (
     <>
