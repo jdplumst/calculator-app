@@ -27,9 +27,12 @@ export default function Home() {
     localStorage.removeItem("userSession");
   };
 
-  // Display digits
+  // Display digits and evaluate expressions
   const handleDigit = (d: string | number) => {
-    if (d !== "=" && d !== "." && d !== 0) {
+    // Calculator can only display 15 characters max
+    if (display.length >= 15) {
+      return;
+    } else if (d !== "=" && d !== "." && d !== 0) {
       console.log(display);
       console.log(typeof display);
       setValue((prevValue) => prevValue + d);
@@ -45,9 +48,28 @@ export default function Home() {
       // First digit can't be 0
       setValue((prevValue) => prevValue + d);
       setDisplay((prevDisplay) => prevDisplay + d);
-    } else if (d === "=" && !operators.includes(value[value.length - 1])) {
+    } else if (d === "=" && value.length !== 0) {
       // Can only evaluate after number input
-      setDisplay((prevDisplay) => eval(prevDisplay).toString());
+      setDisplay((prevDisplay) =>
+        eval(prevDisplay).toString().substring(0, 15)
+      );
+    }
+  };
+
+  // Display operators
+  const handleOperator = (o: string) => {
+    // Calculator can only display 15 characters max
+    if (display.length >= 15) {
+      return;
+    } else {
+      setValue("");
+      if (!operators.includes(display[display.length - 1])) {
+        setDisplay((prevDisplay) => prevDisplay + o);
+      } else {
+        setDisplay(
+          (prevDisplay) => prevDisplay.substring(0, prevDisplay.length - 1) + o
+        );
+      }
     }
   };
 
@@ -120,6 +142,7 @@ export default function Home() {
                 {operators.map((o) => (
                   <button
                     key={o}
+                    onClick={() => handleOperator(o)}
                     className="button bg-orange-500 hover:bg-orange-500">
                     {o}
                   </button>
