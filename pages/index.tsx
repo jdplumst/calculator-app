@@ -33,8 +33,6 @@ export default function Home() {
     if (display.length >= 15) {
       return;
     } else if (d !== "=" && d !== "." && d !== 0) {
-      console.log(display);
-      console.log(typeof display);
       setValue((prevValue) => prevValue + d);
       setDisplay((prevDisplay) => prevDisplay + d);
     } else if (
@@ -50,9 +48,12 @@ export default function Home() {
       setDisplay((prevDisplay) => prevDisplay + d);
     } else if (d === "=" && value.length !== 0) {
       // Can only evaluate after number input
-      setDisplay((prevDisplay) =>
-        eval(prevDisplay).toString().substring(0, 15)
-      );
+      const result = eval(display);
+      if (result.length >= 15) {
+        setDisplay(result.toExponential(10).toString());
+      } else {
+        setDisplay(result.toString());
+      }
     }
   };
 
