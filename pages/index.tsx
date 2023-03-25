@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [username, setUsername] = useState(null);
+  const [value, setValue] = useState("");
+  const [display, setDisplay] = useState("");
+
+  // Arrays to hold the different button types
+  const digits = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0, ".", "="];
+  const operators = ["/", "*", "-", "+"];
+  const special = ["AC", "%", "√", "^"];
+  const memory = ["MC", "MR", "M+", "M-"];
 
   // Check if user session exists
   useEffect(() => {
@@ -13,9 +21,34 @@ export default function Home() {
     }
   }, [username]);
 
+  // Signout user
   const handleSignout = () => {
     setUsername(null);
     localStorage.removeItem("userSession");
+  };
+
+  // Display digits
+  const handleDigit = (d: string | number) => {
+    if (d !== "=" && d !== "." && d !== 0) {
+      console.log(display);
+      console.log(typeof display);
+      setValue((prevValue) => prevValue + d);
+      setDisplay((prevDisplay) => prevDisplay + d);
+    } else if (
+      d === "." &&
+      value[value.length - 1] !== "." && // No 2 consecutive decimals
+      !value.includes(".") // Only 1 decimal per value
+    ) {
+      setValue((prevValue) => prevValue + d);
+      setDisplay((prevDisplay) => prevDisplay + d);
+    } else if (d === 0 && value.length !== 0) {
+      // First digit can't be 0
+      setValue((prevValue) => prevValue + d);
+      setDisplay((prevDisplay) => prevDisplay + d);
+    } else if (d === "=" && !operators.includes(value[value.length - 1])) {
+      // Can only evaluate after number input
+      setDisplay((prevDisplay) => eval(prevDisplay).toString());
+    }
   };
 
   return (
@@ -53,49 +86,46 @@ export default function Home() {
         </nav>
         <div className="mt-10 h-[580px] w-[500px] border-4 border-black bg-gray-500">
           <div className="mx-auto mt-5 flex h-[100px] w-[400px] items-center justify-end border-2 border-black bg-slate-400 p-2 text-5xl">
-            <span>0</span>
+            <span>{display}</span>
           </div>
-          <div className="grid grid-cols-4 gap-[1px] p-5">
-            <button className="button bg-red-500 hover:bg-red-600">MC</button>
-            <button className="button bg-red-500 hover:bg-red-600">MR</button>
-            <button className="button bg-red-500 hover:bg-red-600">M+</button>
-            <button className="button bg-red-500 hover:bg-red-600">M-</button>
-            <button className="button bg-green-500 hover:bg-green-600">
-              AC
-            </button>
-            <button className="button bg-green-500 hover:bg-green-600">
-              %
-            </button>
-            <button className="button bg-green-500 hover:bg-green-600">
-              √
-            </button>
-            <button className="button bg-green-500 hover:bg-green-600">
-              ^
-            </button>
-            <button className="button bg-sky-500 hover:bg-sky-600">7</button>
-            <button className="button bg-sky-500 hover:bg-sky-600">8</button>
-            <button className="button bg-sky-500 hover:bg-sky-600">9</button>
-            <button className="button bg-orange-500 hover:bg-orange-600">
-              /
-            </button>
-            <button className="button bg-sky-500 hover:bg-sky-600">4</button>
-            <button className="button bg-sky-500 hover:bg-sky-600">5</button>
-            <button className="button bg-sky-500 hover:bg-sky-600">6</button>
-            <button className="button bg-orange-500 hover:bg-orange-600">
-              *
-            </button>
-            <button className="button bg-sky-500 hover:bg-sky-600">1</button>
-            <button className="button bg-sky-500 hover:bg-sky-600">2</button>
-            <button className="button bg-sky-500 hover:bg-sky-600">3</button>
-            <button className="button bg-orange-500 hover:bg-orange-600">
-              -
-            </button>
-            <button className="button bg-sky-500 hover:bg-sky-600">0</button>
-            <button className="button bg-sky-500 hover:bg-sky-600">.</button>
-            <button className="button bg-sky-500 hover:bg-sky-600">=</button>
-            <button className="button bg-orange-500 hover:bg-orange-600">
-              +
-            </button>
+          <div className="p-5">
+            <div className="grid grid-cols-4 gap-[1px]">
+              {memory.map((m) => (
+                <button key={m} className="button bg-red-500 hover:bg-red-500">
+                  {m}
+                </button>
+              ))}
+            </div>
+            <div className="grid grid-cols-4 gap-[1px]">
+              {special.map((s) => (
+                <button
+                  key={s}
+                  className="button bg-green-500 hover:bg-green-500">
+                  {s}
+                </button>
+              ))}
+            </div>
+            <div className="grid grid-cols-4 gap-[1px]">
+              <div className="col-span-3 grid grid-cols-3 gap-[1px]">
+                {digits.map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => handleDigit(d)}
+                    className="button bg-sky-500 hover:bg-sky-500">
+                    {d}
+                  </button>
+                ))}
+              </div>
+              <div className="col-span-1 grid grid-cols-1 gap-[1px]">
+                {operators.map((o) => (
+                  <button
+                    key={o}
+                    className="button bg-orange-500 hover:bg-orange-500">
+                    {o}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
