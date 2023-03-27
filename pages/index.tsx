@@ -1,15 +1,35 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaHistory } from "react-icons/fa";
 import { BsArrowUpSquare, BsArrowDownSquare } from "react-icons/bs";
 
+interface IHistory {
+  expression: string;
+  result: number;
+}
+
 export default function Home() {
+  // Username of currently logged in user
   const [username, setUsername] = useState(null);
-  const [value, setValue] = useState(""); // Current operand
-  const [display, setDisplay] = useState(""); // The expression displayed on the calculator
-  const [memory, setMemory] = useState(0); // The value stored in memory
-  const [history, setHistory] = useState([]); // Use Queue (push and shift)
+
+  // Current operand
+  const [value, setValue] = useState("");
+
+  // The expression displayed on the calculator
+  const [display, setDisplay] = useState("");
+
+  // The value stored in memory
+  const [memory, setMemory] = useState(0);
+
+  // Stores 10 most recent evaluated numbers
+  const [history, setHistory] = useState<IHistory[]>([]);
+
+  // The current history index being display
+  let historyIndex = useRef(-1);
+
+  // The expression used to get history values
+  const [expression, setExpression] = useState<string | null>(null);
 
   // Arrays to hold the different button types
   const digits = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0, ".", "="];
@@ -32,8 +52,42 @@ export default function Home() {
     localStorage.removeItem("userSession");
   };
 
+  // Display History on Calculator
+  const showHistory = () => {
+    historyIndex.current = history.length - 1;
+    if (history.length > 0) {
+      setValue(history[history.length - 1].result.toString());
+      setDisplay(history[history.length - 1].result.toString());
+      setExpression(history[history.length - 1].expression);
+    }
+  };
+
+  // Show previous (older) history
+  const showPrevHistory = () => {
+    if (historyIndex.current < 0) return;
+    if (historyIndex.current > 0) {
+      historyIndex.current -= 1;
+    }
+    setValue(history[historyIndex.current].result.toString());
+    setDisplay(history[historyIndex.current].result.toString());
+    setExpression(history[historyIndex.current].expression);
+  };
+
+  // Show next (newer) history
+  const showNextHistory = () => {
+    if (historyIndex.current < 0 || historyIndex.current >= history.length)
+      return;
+    if (historyIndex.current < history.length - 1) {
+      historyIndex.current += 1;
+    }
+    setValue(history[historyIndex.current].result.toString());
+    setDisplay(history[historyIndex.current].result.toString());
+    setExpression(history[historyIndex.current].expression);
+  };
+
   // Handle clear functions
   const handleClear = (c: string) => {
+    setExpression(null);
     if (c === "AC") {
       // Clear the full display and reset memory to 0
       setValue("");
@@ -63,6 +117,7 @@ export default function Home() {
 
   // Handle memory functions
   const handleMemory = (m: string) => {
+    setExpression(null);
     if (m === "MC") {
       setMemory(0);
     } else if (m === "MR") {
@@ -95,6 +150,7 @@ export default function Home() {
 
   // Handle +/-, percentage, square root, and exponential functions
   const handleSpecial = (s: string) => {
+    setExpression(null);
     if (s === "+/-" && value[0] === "-") {
       // Convert current operand to positive
       const index = display.lastIndexOf(value);
@@ -150,6 +206,7 @@ export default function Home() {
 
   // Display digits and evaluate expressions
   const handleDigit = (d: string | number) => {
+    setExpression(null);
     // Calculator can only display 14 characters max
     if (display.length >= 14) {
       return;
@@ -182,17 +239,27 @@ export default function Home() {
     } else if (d === "=" && value.length !== 0) {
       // Can only evaluate after number input
       const replaced = display.replace(/\^/g, "**");
-      const result = eval(replaced);
-      if (result.length >= 14) {
+      const result: number = eval(replaced);
+      if (result.toString().length >= 14) {
         setDisplay(result.toExponential(10).toString());
       } else {
         setDisplay(result.toString());
       }
+
+      // Add to history
+      if (history.length >= 10) {
+        setHistory((prevHistory) => prevHistory.slice(1));
+      }
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { expression: display, result: result }
+      ]);
     }
   };
 
   // Display operators
   const handleOperator = (o: string) => {
+    setExpression(null);
     // Calculator can only display 14 characters max
     if (display.length >= 14) {
       return;
@@ -247,16 +314,23 @@ export default function Home() {
           )}
         </nav>
         <div className="relative mt-10 h-[580px] w-[500px] border-4 border-black bg-gray-500">
-          <button className="absolute right-4 top-6 hover:cursor-pointer">
+          <button
+            onClick={() => showHistory()}
+            className="absolute right-4 top-6 hover:cursor-pointer">
             <FaHistory />
           </button>
-          <button className="absolute right-4 top-6 hover:cursor-pointer">
+          <button
+            onClick={() => showPrevHistory()}
+            className="absolute right-4 top-14 hover:cursor-pointer">
             <BsArrowUpSquare />
           </button>
-          <button className="absolute right-4 top-6 hover:cursor-pointer">
+          <button
+            onClick={() => showNextHistory()}
+            className="absolute right-4 top-20 hover:cursor-pointer">
             <BsArrowDownSquare />
           </button>
           <div className="mx-auto mt-5 flex h-[100px] w-[400px] items-center justify-end border-2 border-black bg-slate-400 p-2 text-5xl">
+            {expression && <span>({expression})= </span>}
             <span>{display}</span>
           </div>
           <div className="p-5">
