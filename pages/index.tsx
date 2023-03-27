@@ -1,6 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { FaHistory } from "react-icons/fa";
+import { BsArrowUpSquare, BsArrowDownSquare } from "react-icons/bs";
 
 export default function Home() {
   const [username, setUsername] = useState(null);
@@ -179,9 +181,7 @@ export default function Home() {
       setDisplay((prevDisplay) => prevDisplay + d);
     } else if (d === "=" && value.length !== 0) {
       // Can only evaluate after number input
-      console.log(display);
       const replaced = display.replace(/\^/g, "**");
-      console.log(replaced);
       const result = eval(replaced);
       if (result.length >= 14) {
         setDisplay(result.toExponential(10).toString());
@@ -246,7 +246,16 @@ export default function Home() {
             </div>
           )}
         </nav>
-        <div className="mt-10 h-[580px] w-[500px] border-4 border-black bg-gray-500">
+        <div className="relative mt-10 h-[580px] w-[500px] border-4 border-black bg-gray-500">
+          <button className="absolute right-4 top-6 hover:cursor-pointer">
+            <FaHistory />
+          </button>
+          <button className="absolute right-4 top-6 hover:cursor-pointer">
+            <BsArrowUpSquare />
+          </button>
+          <button className="absolute right-4 top-6 hover:cursor-pointer">
+            <BsArrowDownSquare />
+          </button>
           <div className="mx-auto mt-5 flex h-[100px] w-[400px] items-center justify-end border-2 border-black bg-slate-400 p-2 text-5xl">
             <span>{display}</span>
           </div>
