@@ -12,8 +12,9 @@ export default function Home() {
   // Arrays to hold the different button types
   const digits = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0, ".", "="];
   const operators = ["/", "*", "-", "+"];
-  const special = ["AC", "%", "√", "^"];
+  const special = ["+/-", "%", "√", "^"];
   const memories = ["MC", "MR", "M+", "M-"];
+  const clear = ["AC", "C", "CE", "DEL"];
 
   // Check if user session exists
   useEffect(() => {
@@ -159,17 +160,27 @@ export default function Home() {
             <span>{display}</span>
           </div>
           <div className="p-5">
-            <div className="grid grid-cols-4 gap-[1px]">
+            <div className="mb-[1px] grid grid-cols-4 gap-[1px]">
+              {clear.map((c) => (
+                <button
+                  key={c}
+                  // onClick={() => handleMemory(m)}
+                  className="button bg-red-500 hover:bg-red-500">
+                  {c}
+                </button>
+              ))}
+            </div>
+            <div className="mb-[1px] grid grid-cols-4 gap-[1px]">
               {memories.map((m) => (
                 <button
                   key={m}
                   onClick={() => handleMemory(m)}
-                  className="button bg-red-500 hover:bg-red-500">
+                  className="button bg-purple-500 hover:bg-purple-500">
                   {m}
                 </button>
               ))}
             </div>
-            <div className="grid grid-cols-4 gap-[1px]">
+            <div className="mb-[1px] grid grid-cols-4 gap-[1px]">
               {special.map((s) => (
                 <button
                   key={s}

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .button {
-  height: 70px;
+  height: 60px;
   border-width: 2px;
   border-color: black;
   font-size: 24px;
