@@ -12,7 +12,7 @@ export default function Home() {
   // Arrays to hold the different button types
   const digits = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0, ".", "="];
   const operators = ["/", "*", "-", "+"];
-  const special = ["+/-", "%", "√", "x^2"];
+  const special = ["+/-", "%", "√", "^"];
   const memories = ["MC", "MR", "M+", "M-"];
   const clear = ["AC", "C", "CE", "DEL"];
 
@@ -133,17 +133,16 @@ export default function Home() {
       setDisplay(
         (prevDisplay) => prevDisplay.substring(0, index) + x.toString()
       );
-    } else if (s === "^") {
-      let x: number | string = Math.pow(Number(value), 2);
-      if (display.length + x.toString().length >= 14) {
-        // Round exponential to 3 decimals if too long
-        x = x.toExponential(10).toString();
+    } else if (s === "^" && value.length > 0) {
+      // Handle exponential function so it isn't next to itself or an operator
+      setValue("");
+      if (
+        !operators.includes(display[display.length - 1]) &&
+        display[display.length - 1] !== "^" &&
+        display.length > 0
+      ) {
+        setDisplay((prevDisplay) => prevDisplay + "^");
       }
-      const index = display.lastIndexOf(value);
-      setValue(x.toString());
-      setDisplay(
-        (prevDisplay) => prevDisplay.substring(0, index) + x.toString()
-      );
     }
   };
 
@@ -180,7 +179,10 @@ export default function Home() {
       setDisplay((prevDisplay) => prevDisplay + d);
     } else if (d === "=" && value.length !== 0) {
       // Can only evaluate after number input
-      const result = eval(display);
+      console.log(display);
+      const replaced = display.replace(/\^/g, "**");
+      console.log(replaced);
+      const result = eval(replaced);
       if (result.length >= 14) {
         setDisplay(result.toExponential(10).toString());
       } else {
@@ -196,9 +198,13 @@ export default function Home() {
       return;
     } else {
       setValue("");
-      if (!operators.includes(display[display.length - 1])) {
+      if (
+        !operators.includes(display[display.length - 1]) &&
+        display[display.length - 1] !== "^" &&
+        display.length > 0
+      ) {
         setDisplay((prevDisplay) => prevDisplay + o);
-      } else {
+      } else if (display.length > 0) {
         // Prevent 2 consecutive operators
         setDisplay(
           (prevDisplay) => prevDisplay.substring(0, prevDisplay.length - 1) + o
