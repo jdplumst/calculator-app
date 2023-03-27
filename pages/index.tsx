@@ -81,6 +81,10 @@ export default function Home() {
       // Display numbers regularly
       setValue((prevValue) => prevValue + d);
       setDisplay((prevDisplay) => prevDisplay + d);
+    } else if (d === "." && value.length === 0) {
+      // Put 0 before single decimal
+      setValue((prevValue) => prevValue + 0 + d);
+      setDisplay((prevDisplay) => prevDisplay + 0 + d);
     } else if (
       d === "." &&
       value[value.length - 1] !== "." && // No 2 consecutive decimals
