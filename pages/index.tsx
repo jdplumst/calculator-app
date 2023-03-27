@@ -6,10 +6,8 @@ export default function Home() {
   const [username, setUsername] = useState(null);
   const [value, setValue] = useState(""); // Current operand
   const [display, setDisplay] = useState(""); // The expression displayed on the calculator
-  const [memory, setMemory] = useState(0); // Stored in memory
+  const [memory, setMemory] = useState(0); // The value stored in memory
   const [history, setHistory] = useState([]); // Use Queue (push and shift)
-
-  // USE INDEXOF TO GET INDEX OF VALUE SUBSTRING IN DISPLAY FOR THE +/- FUNCTION
 
   // Arrays to hold the different button types
   const digits = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0, ".", "="];
@@ -30,6 +28,35 @@ export default function Home() {
   const handleSignout = () => {
     setUsername(null);
     localStorage.removeItem("userSession");
+  };
+
+  // Handle clear functions
+  const handleClear = (c: string) => {
+    if (c === "AC") {
+      // Clear the full display and reset memory to 0
+      setValue("");
+      setDisplay("");
+      setMemory(0);
+    } else if (c === "C") {
+      // Clear the full display
+      setValue("");
+      setDisplay("");
+    } else if (c === "CE") {
+      // Clear current operand
+      const index = display.lastIndexOf(value);
+      setValue("");
+      setDisplay((prevDisplay) => prevDisplay.substring(0, index));
+    } else if (c === "DEL") {
+      // Delete the rightmost display character
+      if (value.length > 0) {
+        setValue((prevValue) => prevValue.substring(0, prevValue.length - 1));
+      }
+      if (display.length > 0) {
+        setDisplay((prevDisplay) =>
+          prevDisplay.substring(0, prevDisplay.length - 1)
+        );
+      }
+    }
   };
 
   // Handle memory functions
@@ -222,7 +249,7 @@ export default function Home() {
               {clear.map((c) => (
                 <button
                   key={c}
-                  // onClick={() => handleMemory(m)}
+                  onClick={() => handleClear(c)}
                   className="button bg-red-500 hover:bg-red-500">
                   {c}
                 </button>
