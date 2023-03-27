@@ -9,10 +9,12 @@ export default function Home() {
   const [memory, setMemory] = useState(0); // Stored in memory
   const [history, setHistory] = useState([]); // Use Queue (push and shift)
 
+  // USE INDEXOF TO GET INDEX OF VALUE SUBSTRING IN DISPLAY FOR THE +/- FUNCTION
+
   // Arrays to hold the different button types
   const digits = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0, ".", "="];
   const operators = ["/", "*", "-", "+"];
-  const special = ["+/-", "%", "√", "^"];
+  const special = ["+/-", "%", "√", "x^2"];
   const memories = ["MC", "MR", "M+", "M-"];
   const clear = ["AC", "C", "CE", "DEL"];
 
@@ -62,10 +64,66 @@ export default function Home() {
     }
   };
 
+  // Handle +/-, percentage, square root, and exponential functions
+  const handleSpecial = (s: string) => {
+    if (s === "+/-" && value[0] === "-") {
+      // Convert current operand to positive
+      const index = display.lastIndexOf(value);
+      setValue((prevValue) => prevValue.substring(1));
+      setDisplay(
+        (prevDisplay) =>
+          prevDisplay.substring(0, index) + prevDisplay.substring(index + 1)
+      );
+    } else if (s === "+/-" && value[0] !== "-" && value.length > 0) {
+      // Convert current operand to negative if operand isn't empty
+      const index = display.lastIndexOf(value);
+      setValue((prevValue) => "-" + prevValue);
+      setDisplay(
+        (prevDisplay) =>
+          prevDisplay.substring(0, index) + "-" + prevDisplay.substring(index)
+      );
+    } else if (s === "%") {
+      // Convert current operand to percentage
+      let x: number | string = Number(value) * 0.01;
+      if (display.length + x.toString().length >= 14) {
+        // Round square root to 3 decimals if too long
+        x = x.toFixed(10).toString();
+      }
+      const index = display.lastIndexOf(value);
+      setValue(x.toString());
+      setDisplay(
+        (prevDisplay) => prevDisplay.substring(0, index) + x.toString()
+      );
+    } else if (s === "√") {
+      // Get square root of current operand
+      let x: number | string = Math.sqrt(Number(value));
+      if (display.length + x.toString().length >= 14) {
+        // Round square root to 3 decimals if too long
+        x = x.toFixed(10).toString();
+      }
+      const index = display.lastIndexOf(value);
+      setValue(x.toString());
+      setDisplay(
+        (prevDisplay) => prevDisplay.substring(0, index) + x.toString()
+      );
+    } else if (s === "^") {
+      let x: number | string = Math.pow(Number(value), 2);
+      if (display.length + x.toString().length >= 14) {
+        // Round exponential to 3 decimals if too long
+        x = x.toExponential(10).toString();
+      }
+      const index = display.lastIndexOf(value);
+      setValue(x.toString());
+      setDisplay(
+        (prevDisplay) => prevDisplay.substring(0, index) + x.toString()
+      );
+    }
+  };
+
   // Display digits and evaluate expressions
   const handleDigit = (d: string | number) => {
-    // Calculator can only display 15 characters max
-    if (display.length >= 15) {
+    // Calculator can only display 14 characters max
+    if (display.length >= 14) {
       return;
     } else if (
       d !== "=" &&
@@ -96,7 +154,7 @@ export default function Home() {
     } else if (d === "=" && value.length !== 0) {
       // Can only evaluate after number input
       const result = eval(display);
-      if (result.length >= 15) {
+      if (result.length >= 14) {
         setDisplay(result.toExponential(10).toString());
       } else {
         setDisplay(result.toString());
@@ -106,8 +164,8 @@ export default function Home() {
 
   // Display operators
   const handleOperator = (o: string) => {
-    // Calculator can only display 15 characters max
-    if (display.length >= 15) {
+    // Calculator can only display 14 characters max
+    if (display.length >= 14) {
       return;
     } else {
       setValue("");
@@ -184,6 +242,7 @@ export default function Home() {
               {special.map((s) => (
                 <button
                   key={s}
+                  onClick={() => handleSpecial(s)}
                   className="button bg-green-500 hover:bg-green-500">
                   {s}
                 </button>
