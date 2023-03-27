@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [username, setUsername] = useState(null);
-  const [value, setValue] = useState("");
-  const [display, setDisplay] = useState("");
+  const [value, setValue] = useState(""); // Current operand
+  const [display, setDisplay] = useState(""); // The expression displayed on the calculator
+  const [memory, setMemory] = useState(0); // Stored in memory
+  const [history, setHistory] = useState([]); // Use Queue (push and shift)
 
   // Arrays to hold the different button types
   const digits = [7, 8, 9, 4, 5, 6, 1, 2, 3, 0, ".", "="];
   const operators = ["/", "*", "-", "+"];
   const special = ["AC", "%", "√", "^"];
-  const memory = ["MC", "MR", "M+", "M-"];
+  const memories = ["MC", "MR", "M+", "M-"];
 
   // Check if user session exists
   useEffect(() => {
@@ -27,6 +29,38 @@ export default function Home() {
     localStorage.removeItem("userSession");
   };
 
+  // Handle memory functions
+  const handleMemory = (m: string) => {
+    if (m === "MC") {
+      setMemory(0);
+    } else if (m === "MR") {
+      setValue(memory.toString());
+      setDisplay(memory.toString());
+    } else if (m === "M+") {
+      // If last thing displayed is an operator, remove it and
+      // store the result of the expression before it in memory
+      if (operators.includes(display[display.length - 1])) {
+        setMemory(
+          (prevMemory) =>
+            prevMemory + eval(display.substring(0, display.length - 1))
+        );
+      } else {
+        setMemory((prevMemory) => prevMemory + eval(display));
+      }
+    } else if (m === "M-") {
+      // If last thing displayed is an operator, remove it and
+      // store the result of the expression before it in memory
+      if (operators.includes(display[display.length - 1])) {
+        setMemory(
+          (prevMemory) =>
+            prevMemory - eval(display.substring(0, display.length - 1))
+        );
+      } else {
+        setMemory((prevMemory) => prevMemory - eval(display));
+      }
+    }
+  };
+
   // Display digits and evaluate expressions
   const handleDigit = (d: string | number) => {
     // Calculator can only display 15 characters max
@@ -38,11 +72,13 @@ export default function Home() {
       display[display.length - 1] === "0" &&
       value.length === 1
     ) {
+      // Remove leading zeroes
       setValue((prevValue) => prevValue.substring(0, prevValue.length - 1) + d);
       setDisplay(
         (prevDisplay) => prevDisplay.substring(0, prevDisplay.length - 1) + d
       );
     } else if (d !== "=" && d !== ".") {
+      // Display numbers regularly
       setValue((prevValue) => prevValue + d);
       setDisplay((prevDisplay) => prevDisplay + d);
     } else if (
@@ -73,6 +109,7 @@ export default function Home() {
       if (!operators.includes(display[display.length - 1])) {
         setDisplay((prevDisplay) => prevDisplay + o);
       } else {
+        // Prevent 2 consecutive operators
         setDisplay(
           (prevDisplay) => prevDisplay.substring(0, prevDisplay.length - 1) + o
         );
@@ -119,8 +156,11 @@ export default function Home() {
           </div>
           <div className="p-5">
             <div className="grid grid-cols-4 gap-[1px]">
-              {memory.map((m) => (
-                <button key={m} className="button bg-red-500 hover:bg-red-500">
+              {memories.map((m) => (
+                <button
+                  key={m}
+                  onClick={() => handleMemory(m)}
+                  className="button bg-red-500 hover:bg-red-500">
                   {m}
                 </button>
               ))}
