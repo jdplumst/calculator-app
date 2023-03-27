@@ -32,7 +32,17 @@ export default function Home() {
     // Calculator can only display 15 characters max
     if (display.length >= 15) {
       return;
-    } else if (d !== "=" && d !== "." && d !== 0) {
+    } else if (
+      d !== "=" &&
+      d !== "." &&
+      display[display.length - 1] === "0" &&
+      value.length === 1
+    ) {
+      setValue((prevValue) => prevValue.substring(0, prevValue.length - 1) + d);
+      setDisplay(
+        (prevDisplay) => prevDisplay.substring(0, prevDisplay.length - 1) + d
+      );
+    } else if (d !== "=" && d !== ".") {
       setValue((prevValue) => prevValue + d);
       setDisplay((prevDisplay) => prevDisplay + d);
     } else if (
@@ -40,10 +50,6 @@ export default function Home() {
       value[value.length - 1] !== "." && // No 2 consecutive decimals
       !value.includes(".") // Only 1 decimal per value
     ) {
-      setValue((prevValue) => prevValue + d);
-      setDisplay((prevDisplay) => prevDisplay + d);
-    } else if (d === 0 && value.length !== 0) {
-      // First digit can't be 0
       setValue((prevValue) => prevValue + d);
       setDisplay((prevDisplay) => prevDisplay + d);
     } else if (d === "=" && value.length !== 0) {
