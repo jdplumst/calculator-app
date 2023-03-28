@@ -21,12 +21,12 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
 
         // Send error message if user not found in database
         if (!user) {
-          res.status(400).json({ error: "User does not exist" });
+          return res.status(400).json({ error: "User does not exist" });
         } else {
           // Check that password is correct
           const check = await bcrypt.compare(password, user.password);
           if (!check) {
-            res.status(400).json({ error: "Incorrect password" });
+            return res.status(400).json({ error: "Incorrect password" });
           } else {
             return res.status(200).json({ username: user.username });
           }
