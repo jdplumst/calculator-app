@@ -2,7 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcrypt";
 import prisma from "@/prisma";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function signup(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   // Ensure only POST methods can be used on this route
   switch (req.method) {
     case "POST":
@@ -39,4 +42,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     default:
       return res.status(405).json({ error: "Method Not Allowed" });
   }
-};
+}

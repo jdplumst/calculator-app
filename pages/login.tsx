@@ -15,7 +15,7 @@ export default function Login() {
     if (user) {
       router.push("/");
     }
-  }, []);
+  }, [router]);
 
   // Attempt to login user
   const handleLogin = async (e: React.FormEvent) => {

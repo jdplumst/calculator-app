@@ -15,7 +15,7 @@ export default function Signup() {
     if (user) {
       router.push("/");
     }
-  }, []);
+  }, [router]);
 
   // Attempt to signup user
   const handleSignup = async (e: React.FormEvent) => {
