@@ -1,6 +1,6 @@
 # Project Description
 
-This is a calculator app with user authentication. This link to the deployed app is
+This is a calculator app with user authentication. This link to the deployed app is https://calculator-app-olive.vercel.app/
 
 This app was deployed using Vercel and the PostgreSQL database is hosted by Supabase.
 
