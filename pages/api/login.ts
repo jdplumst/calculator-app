@@ -27,9 +27,9 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
           const check = await bcrypt.compare(password, user.password);
           if (!check) {
             res.status(400).json({ error: "Incorrect password" });
+          } else {
+            return res.status(200).json({ username: user.username });
           }
-
-          return res.status(200).json({ username: user.username });
         }
       } catch (error) {
         return res
