@@ -1,6 +1,8 @@
 # Project Description
 
-This is a calculator app with user authentication. This link to the deployed app is https://calculator-app-olive.vercel.app/
+This is a calculator app with user authentication. This link to the deployed app is https://calculator-app-olive.vercel.app/. The login page is https://calculator-app-olive.vercel.app/login and the signup page is https://calculator-app-olive.vercel.app/signup.
+
+The history function is located to the right of the calculator screen. The top button is used to start displaying history, and the up and down arrow buttons are used to navigate through the user's history, but only after the top button is pressed first.
 
 This app was deployed using Vercel and the PostgreSQL database is hosted by Supabase.
 
