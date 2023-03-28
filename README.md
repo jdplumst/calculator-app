@@ -26,10 +26,10 @@ In case using database hosting with Supabase is not allowed, this app can also b
 4. Open the command prompt and login, entering password when prompted
 
    ```
-   psql -U *username*
+   psql -U [USERNAME]
    ```
 
-5. Create a database
+5. Create a database called calculator
 
    ```
    CREATE DATABASE calculator;
@@ -52,6 +52,9 @@ In case using database hosting with Supabase is not allowed, this app can also b
    npx prisma generate
    ```
 9. Run the app
+
    ```
    npm run dev
    ```
+
+10. Open the app by entering localhost:3000 into your browser
