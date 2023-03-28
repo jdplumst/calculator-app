@@ -11,7 +11,7 @@ interface IHistory {
 
 export default function Home() {
   // Username of currently logged in user
-  const [username, setUsername] = useState(null);
+  const [username, setUsername] = useState<string | null>(null);
 
   // Current operand
   const [value, setValue] = useState("");
@@ -42,7 +42,12 @@ export default function Home() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userSession") || "null");
     if (user) {
+      console.log(user);
       setUsername(user.username);
+      if (user.value) setValue(user.value);
+      if (user.display) setDisplay(user.display);
+      if (user.memory) setMemory(user.memory);
+      if (user.history) setHistory(user.history);
     }
   }, [username]);
 
@@ -50,6 +55,23 @@ export default function Home() {
   const handleSignout = () => {
     setUsername(null);
     localStorage.removeItem("userSession");
+  };
+
+  // Save session
+  const saveSession = () => {
+    // Save session
+    if (username) {
+      localStorage.setItem(
+        "userSession",
+        JSON.stringify({
+          username: username,
+          value: value,
+          display: display,
+          memory: memory,
+          history: history
+        })
+      );
+    }
   };
 
   // Display History on Calculator
@@ -89,10 +111,11 @@ export default function Home() {
   const handleClear = (c: string) => {
     setExpression(null);
     if (c === "AC") {
-      // Clear the full display and reset memory to 0
+      // Clear the full display and reset memory to 0 and save session
       setValue("");
       setDisplay("");
       setMemory(0);
+      saveSession();
     } else if (c === "C") {
       // Clear the full display
       setValue("");
@@ -118,6 +141,7 @@ export default function Home() {
   // Handle memory functions
   const handleMemory = (m: string) => {
     setExpression(null);
+    saveSession();
     if (m === "MC") {
       setMemory(0);
     } else if (m === "MR") {
@@ -254,6 +278,9 @@ export default function Home() {
         ...prevHistory,
         { expression: display, result: result }
       ]);
+
+      // Save Session
+      saveSession();
     }
   };
 
